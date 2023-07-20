@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  pseudo  String? @unique
+  password String? 
+}
+
+model Item_type {
+  id    Int     @id @default(autoincrement())
+  name_en String
+  name_es String
+  name_fr String
+  name_de String
+  name_pt String
+  name_it String
+  super_type Int
+  category Int
+  item Item[]
+}
+
+model Item {
+  id    Int     @id @default(autoincrement())
+  name_en String
+  name_es String
+  name_fr String
+  name_de String
+  name_pt String
+  name_it String
+  type_id Int
+  desc_en String
+  desc_es String
+  desc_fr String
+  desc_de String
+  desc_pt String
+  desc_it String
+  icon_id Int
+  level Int
+  pods Int
+  price Int
+  item_set_id Float
+  criteria String
+  pet_food_xp Int
+  nuggets Int
+  item_type Item_type @relation(fields: [type_id], references: [id])
+  weapon Weapon[]
+}
+
+model Weapon {
+  id Int @id @default(autoincrement())
+  item_id Int
+  item Item @relation(fields: [item_id], references: [id])
+  criticalHitBonus Int
+  min_range Int
+  criticalHitProbability Int
+  range Int
+  ap_cost Int
+  maxCastPerTurn Int
+}
