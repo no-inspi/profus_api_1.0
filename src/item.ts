@@ -42,7 +42,6 @@ router.get('/get_all_item', async (req: any, res: any) => {
 
 
 router.get('/get_item_filter', async (req: any, res: any) => {
-    console.log(req.query.contains)
     
     const item = await prisma.item_type.findMany({
         where: {
