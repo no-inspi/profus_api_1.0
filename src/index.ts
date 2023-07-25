@@ -5,9 +5,10 @@ const cors = require('cors');
 
 
 // routes
-var user = require('./user')
+var user = require('./user/user.routes')
 var import_data = require('./import_data')
-var item = require('./item')
+var item = require('./items/item')
+var auth = require('./auth/auth.routes')
 
 const prisma = new PrismaClient()
 const app = express()
@@ -19,6 +20,7 @@ app.use(cors());
 app.use('/users', user)
 app.use('/data', import_data)
 app.use('/items', item)
+app.use('/auth', auth)
 
 app.get('/', async (req, res) => {
   res.json({ "status": "working" })
@@ -33,7 +35,6 @@ app.get('/test', async (req, res) => {
   if (item_test) {
     for (let i = 0; i < item_test.fields.length; i++) {
       let element = item_test.fields[i];
-      // console.log(element=="undefined" ? item_test.fields[i] : element)
       if (typeof element.relationName === "undefined") {
         console.log(element)
         array_columns.push([element.name, element.type])

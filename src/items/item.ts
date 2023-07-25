@@ -1,13 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 import * as crypto from 'crypto';
 
+const { db } = require('../utils/db');
+
+const { isAuthenticated } = require('../middlewares');
+
 var express = require('express')
 const router = express.Router();
 
-const prisma = new PrismaClient()
+// const prisma = new PrismaClient()
 
-router.get('/get_all_item', async (req: any, res: any) => {
-    const item = await prisma.item_type.findMany({
+router.get('/get_all_item', isAuthenticated, async (req: any, res: any) => {
+    const item = await db.item_type.findMany({
         where: {
             category: 0,
             super_type: {lte: 11},
@@ -41,9 +45,9 @@ router.get('/get_all_item', async (req: any, res: any) => {
 })
 
 
-router.get('/get_item_filter', async (req: any, res: any) => {
+router.get('/get_item_filter', isAuthenticated, async (req: any, res: any) => {
     
-    const item = await prisma.item_type.findMany({
+    const item = await db.item_type.findMany({
         where: {
             category: 0,
             super_type: {lte: 11},
