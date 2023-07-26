@@ -1,8 +1,8 @@
-const { db } = require('../utils/db');
+const { dbexport } = require('../utils/db');
 import * as crypto from 'crypto';
 
 export function findUserByEmail(email: any) {
-    return db.user.findUnique({
+    return dbexport.user.findUnique({
         where: {
             email
         },
@@ -10,7 +10,7 @@ export function findUserByEmail(email: any) {
 }
 
 export function findUserByPseudo(pseudo: any) {
-    return db.user.findUnique({
+    return dbexport.user.findUnique({
         where: {
             pseudo
         },
@@ -19,7 +19,7 @@ export function findUserByPseudo(pseudo: any) {
 
 export function createUserByEmailAndPassword(user: any) {
     user.password = crypto.createHash('sha256').update(user.password).digest('hex');
-    return db.user.create({
+    return dbexport.user.create({
         data: user,
     });
 }
@@ -27,14 +27,14 @@ export function createUserByEmailAndPassword(user: any) {
 export function createUser(user: any) {
     user.password = crypto.createHash('sha256').update(user.password).digest('hex');
     console.log(user)
-    return db.user.create({
+    return dbexport.user.create({
         data: user,
     });
     // return 'test'
 }
 
 export function findUserById(id: any) {
-    return db.user.findUnique({
+    return dbexport.user.findUnique({
         where: {
             id,
         },
@@ -42,7 +42,7 @@ export function findUserById(id: any) {
 }
 
 export function updateUserById(id: any, user: any) {
-    return db.user.update({
+    return dbexport.user.update({
         where: {
             id,
         },

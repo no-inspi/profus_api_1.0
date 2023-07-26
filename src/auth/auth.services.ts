@@ -1,10 +1,10 @@
-const { db } = require('../utils/db');
+const { dbexport } = require('../utils/db');
 // import { hashToken } from '../utils/hashToken';
 const { hashToken } = require('../utils/hashToken');
 
 export function addRefreshTokenToWhitelist({ jti, refreshToken, userId }: any) {
   console.log(hashToken(refreshToken))
-  return db.refreshToken.create({
+  return dbexport.refreshToken.create({
     data: {
       id: jti,
       hashedToken: hashToken(refreshToken),
@@ -14,7 +14,7 @@ export function addRefreshTokenToWhitelist({ jti, refreshToken, userId }: any) {
 }
 
 export function findRefreshTokenById(id: any) {
-  return db.refreshToken.findUnique({
+  return dbexport.refreshToken.findUnique({
     where: {
       id,
     },
@@ -22,7 +22,7 @@ export function findRefreshTokenById(id: any) {
 }
 
 export function deleteRefreshToken(id: any) {
-  return db.refreshToken.update({
+  return dbexport.refreshToken.update({
     where: {
       id,
     },
@@ -33,7 +33,7 @@ export function deleteRefreshToken(id: any) {
 }
 
 export function revokeTokens(userId: any) {
-  return db.refreshToken.updateMany({
+  return dbexport.refreshToken.updateMany({
     where: {
       userId
     },

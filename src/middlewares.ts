@@ -17,7 +17,7 @@ function errorHandler(err: any, req: any, res: any, next: any) {
   });
 }
 
-function isAuthenticated(req: any, res: any, next: any) {
+export function isAuthenticated(req: any, res: any, next: any) {
   const { authorization } = req.headers;
   if (!authorization) {
     res.status(401);
