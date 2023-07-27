@@ -29,8 +29,35 @@ model RefreshToken {
   updatedAt   DateTime @default(now()) @updatedAt
 }
 
+model Price {
+  id        Int      @id @unique @default(autoincrement())
+  id_item   Int
+  price     Float
+  createdAt DateTime @default(now())
+  item      item     @relation(fields: [id_item], references: [id])
+}
+
+model RunesPrice {
+  id        Int         @id @unique @default(autoincrement())
+  id_effect Int
+  price     Float
+  createdAt DateTime    @default(now())
+  runes    runes @relation(fields: [id_effect], references: [effect_id])
+}
+
 /// This view has been renamed to 'Renamedclass' during introspection, because the original name 'class' is reserved.
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view runes {
+  
+  effect_id    Int @unique
+  desc_fr      String?
+  category     Int?
+  power        Decimal?     @db.Decimal
+  element_id   Int?
+  element_name String?
+  runesprice RunesPrice[]
+}
+
 view Renamedclass {
   id            Int      @unique
   name_en       String?
@@ -99,11 +126,12 @@ view item {
   item_type   item_type     @relation(fields: [type_id], references: [id])
   weapon      weapon[]
   item_effect item_effect[]
+  item_price  Price[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view item_effect {
-  item_id      Int      @unique
+  item_id      Int          @unique
   effect_id    Int?
   min          Int?
   max          Int?
@@ -116,10 +144,10 @@ view item_effect {
   desc_it      String?
   category     Int?
   boost        Boolean?
-  power        Decimal? @db.Decimal
+  power        Decimal?     @db.Decimal
   element_id   Int?
   element_name String?
-  item         item     @relation(fields: [item_id], references: [id])
+  item         item         @relation(fields: [item_id], references: [id])
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.

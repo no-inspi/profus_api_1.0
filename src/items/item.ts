@@ -59,7 +59,8 @@ router.get('/get_item_filter', isAuthenticated, async (req: any, res: any) => {
             item: {
                 where: {
                     name_fr: {
-                        contains: req.query.contains
+                        contains: req.query.contains,
+                        mode: 'insensitive',
                     }
                 },
                 select: {
@@ -122,5 +123,62 @@ router.get('/item_effect', async (req: any, res: any) => {
     res.json(item[0])
     }
 })
+
+router.get('/item_price', async (req: any, res: any) => {
+    console.log(req.query.id)
+    if (req.query.id != "undefined") {
+
+    
+    const id = Number(req.query.id)
+    const item = await dbexport.item.findUnique({
+        where: {
+            id: id,
+        },
+        select: {
+            name_fr: true,
+            desc_fr: true,
+            level: true,
+            price: true,
+            item_price: {
+                where: {
+                    id_item: id,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+                take: 1,
+            }
+        },
+    })
+    res.json(item)
+    }
+})
+
+router.get('/rune_price', async (req: any, res: any) => {
+    console.log(req.query.id)
+    if (req.query.id != "undefined") {
+
+    
+    const id = Number(req.query.id)
+    const runes = await dbexport.runes.findUnique({
+        where: {
+            effect_id: id,
+        },
+        select: {
+            runesprice: {
+                where: {
+                    id_effect: id,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+                take: 1,
+            }
+        },
+    })
+    res.json(runes)
+    }
+})
+
 
 module.exports = router;
