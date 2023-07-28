@@ -108,7 +108,7 @@ router.get('/item_effect', async (req: any, res: any) => {
             item_effect: {
                 where: {
                     item_id: id,
-                    category: 0,
+                    rune_item_id: {not: null}
                 },
             }
         },

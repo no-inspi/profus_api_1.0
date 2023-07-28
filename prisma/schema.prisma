@@ -42,20 +42,6 @@ model RunesPrice {
   id_effect Int
   price     Float
   createdAt DateTime    @default(now())
-  runes    runes @relation(fields: [id_effect], references: [effect_id])
-}
-
-/// This view has been renamed to 'Renamedclass' during introspection, because the original name 'class' is reserved.
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view runes {
-  
-  effect_id    Int @unique
-  desc_fr      String?
-  category     Int?
-  power        Decimal?     @db.Decimal
-  element_id   Int?
-  element_name String?
-  runesprice RunesPrice[]
 }
 
 view Renamedclass {
@@ -78,13 +64,6 @@ view Renamedclass {
 view class_spell {
   class_id Int     @unique
   spell_id BigInt?
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view craft_ingredient {
-  item_id       Int     @unique
-  ingredient_id Int?
-  quantity      BigInt?
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -124,14 +103,13 @@ view item {
   pet_food_xp Int
   nuggets     Int
   item_type   item_type     @relation(fields: [type_id], references: [id])
-  weapon      weapon[]
   item_effect item_effect[]
   item_price  Price[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view item_effect {
-  item_id      Int          @unique
+  item_id      Int      @unique
   effect_id    Int?
   min          Int?
   max          Int?
@@ -144,64 +122,11 @@ view item_effect {
   desc_it      String?
   category     Int?
   boost        Boolean?
-  power        Decimal?     @db.Decimal
+  power        Decimal? @db.Decimal
   element_id   Int?
   element_name String?
-  item         item         @relation(fields: [item_id], references: [id])
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view item_damage {
-  item_id         Int      @unique
-  res_per_earth   BigInt?
-  res_per_water   BigInt?
-  res_per_air     BigInt?
-  res_per_fire    BigInt?
-  res_per_neutral BigInt?
-  res_earth       BigInt?
-  res_water       BigInt?
-  res_air         BigInt?
-  res_fire        BigInt?
-  res_neutral     BigInt?
-  res_crit        BigInt?
-  res_pou         BigInt?
-  PA              BigInt?
-  PM              BigInt?
-  PO              BigInt?
-  Invo            BigInt?
-  do_ren          BigInt?
-  crit            BigInt?
-  fui             Decimal? @db.Decimal
-  tac             Decimal? @db.Decimal
-  ret_pm          Decimal? @db.Decimal
-  ret_pa          Decimal? @db.Decimal
-  esq_pm          Decimal? @db.Decimal
-  esq_pa          Decimal? @db.Decimal
-  pp              Decimal? @db.Decimal
-  sasa            BigInt?
-  vita            BigInt?
-  ini             BigInt?
-  pods            BigInt?
-  pwr_all         BigInt?
-  add_all         BigInt?
-  add_neutral     BigInt?
-  pwr_earth       BigInt?
-  add_earth       BigInt?
-  pwr_fire        BigInt?
-  add_fire        BigInt?
-  pwr_air         BigInt?
-  add_air         BigInt?
-  pwr_water       BigInt?
-  add_water       BigInt?
-  add_heal        BigInt?
-  pwr_pi          BigInt?
-  add_pi          BigInt?
-  add_crit        BigInt?
-  add_pou         BigInt?
-  dmg_spell       BigInt?
-  dmg_weapon      BigInt?
-  dmg_range       BigInt?
-  dmg_melee       BigInt?
+  rune_item_id Int?
+  item         item     @relation(fields: [item_id], references: [id])
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -336,6 +261,24 @@ view job_action {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view job_craft_ingredient {
+  id            Int     @unique
+  item_id       Int?
+  ingredient_id Int?
+  quantity      BigInt?
+  name_en       String?
+  name_es       String?
+  name_fr       String?
+  name_de       String?
+  name_pt       String?
+  name_it       String?
+  icon_id       Int?
+  type_id       Int?
+  pods          Int?
+  level         Int?
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view weapon {
   id                     Int  @unique
   criticalHitBonus       Int?
@@ -344,26 +287,4 @@ view weapon {
   range                  Int?
   ap_cost                Int?
   maxCastPerTurn         Int?
-  item_id                Int
-  item                   item @relation(fields: [item_id], references: [id])
-}
-
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view weapon_damage {
-  item_id         Int     @unique
-  min_dmg_neutral BigInt?
-  max_dmg_neutral BigInt?
-  line_neutral    BigInt?
-  min_dmg_earth   BigInt?
-  max_dmg_earth   BigInt?
-  line_earth      BigInt?
-  min_dmg_fire    BigInt?
-  max_dmg_fire    BigInt?
-  line_fire       BigInt?
-  min_dmg_water   BigInt?
-  max_dmg_water   BigInt?
-  line_water      BigInt?
-  min_dmg_air     BigInt?
-  max_dmg_air     BigInt?
-  line_air        BigInt?
 }
