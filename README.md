@@ -14,3 +14,5 @@ npm install
 cd /src
 npx ts-node-dev .\index.ts
 ```
+
+npx prisma migrate dev --name TheName

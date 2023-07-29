@@ -26,7 +26,7 @@ CREATE TABLE "RefreshToken" (
 CREATE TABLE "Price" (
     "id" SERIAL NOT NULL,
     "id_item" INTEGER NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
+    "price_t" DOUBLE PRECISION NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Price_pkey" PRIMARY KEY ("id")

@@ -93,34 +93,34 @@ router.get('/item_effect', async (req: any, res: any) => {
     console.log(req.query.id)
     if (req.query.id != "undefined") {
 
-    
-    const id = Number(req.query.id)
-    const item = await dbexport.item.findMany({
 
-        where: {
-            id: id,
-        },
-        select: {
-            name_fr: true,
-            desc_fr: true,
-            level: true,
-            price: true,
-            item_effect: {
-                where: {
-                    item_id: id,
-                    rune_item_id: {not: null}
-                },
-            }
-        },
-    })
-    
-    // const item = await dbexport.item_effect.findMany({
-    //     where: {
-    //         item_id: 44
-    //     }
-    // })
-    // console.log(item[0])
-    res.json(item[0])
+        const id = Number(req.query.id)
+        const item = await dbexport.item.findMany({
+
+            where: {
+                id: id,
+            },
+            select: {
+                name_fr: true,
+                desc_fr: true,
+                level: true,
+                price: true,
+                item_effect: {
+                    where: {
+                        item_id: id,
+                        rune_item_id: { not: null }
+                    },
+                }
+            },
+        })
+
+        // const item = await dbexport.item_effect.findMany({
+        //     where: {
+        //         item_id: 44
+        //     }
+        // })
+        // console.log(item[0])
+        res.json(item[0])
     }
 })
 
@@ -128,29 +128,29 @@ router.get('/item_price', async (req: any, res: any) => {
     console.log(req.query.id)
     if (req.query.id != "undefined") {
 
-    
-    const id = Number(req.query.id)
-    const item = await dbexport.item.findUnique({
-        where: {
-            id: id,
-        },
-        select: {
-            name_fr: true,
-            desc_fr: true,
-            level: true,
-            price: true,
-            item_price: {
-                where: {
-                    id_item: id,
-                },
-                orderBy: {
-                    createdAt: "desc",
-                },
-                take: 1,
-            }
-        },
-    })
-    res.json(item)
+
+        const id = Number(req.query.id)
+        const item = await dbexport.item.findUnique({
+            where: {
+                id: id,
+            },
+            select: {
+                name_fr: true,
+                desc_fr: true,
+                level: true,
+                price: true,
+                item_price: {
+                    where: {
+                        id_item: id,
+                    },
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                    take: 1,
+                }
+            },
+        })
+        res.json(item)
     }
 })
 
@@ -158,25 +158,43 @@ router.get('/rune_price', async (req: any, res: any) => {
     console.log(req.query.id)
     if (req.query.id != "undefined") {
 
-    
-    const id = Number(req.query.id)
-    const runes = await dbexport.runes.findUnique({
-        where: {
-            effect_id: id,
-        },
-        select: {
-            runesprice: {
-                where: {
-                    id_effect: id,
-                },
-                orderBy: {
-                    createdAt: "desc",
-                },
-                take: 1,
-            }
-        },
-    })
-    res.json(runes)
+        const id = Number(req.query.id)
+        const runes = await dbexport.item.findUnique({
+            where: {
+                id: id,
+                type_id: 78,
+            },
+            select: {
+                rune_price: {
+                    where: {
+                        item_id: id,
+                    },
+                    orderBy: {
+                        saved_date: "desc",
+                    },
+                    take: 1,
+                }
+            },
+        })
+        // const item = await dbexport.item.findMany({
+
+        //     where: {
+        //         id: id,
+        //     },
+        //     select: {
+        //         name_fr: true,
+        //         desc_fr: true,
+        //         level: true,
+        //         price: true,
+        //         item_effect: {
+        //             where: {
+        //                 item_id: id,
+        //                 rune_item_id: {not: null}
+        //             },
+        //         }
+        //     },
+        // })
+        res.json({"price": runes.rune_price[0].price})
     }
 })
 

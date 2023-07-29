@@ -32,16 +32,26 @@ model RefreshToken {
 model Price {
   id        Int      @id @unique @default(autoincrement())
   id_item   Int
-  price     Float
+  price_t   Float
   createdAt DateTime @default(now())
   item      item     @relation(fields: [id_item], references: [id])
 }
 
 model RunesPrice {
-  id        Int         @id @unique @default(autoincrement())
+  id        Int      @id @unique @default(autoincrement())
   id_effect Int
   price     Float
-  createdAt DateTime    @default(now())
+  createdAt DateTime @default(now())
+}
+
+model profus_app_itemaveragepriceentry {
+  id         Int      @id @unique @default(autoincrement())
+  saved_date DateTime @default(now())
+  price      Int
+  item_id    Int
+  server_id  Int
+  user_id    Int?
+  item      item     @relation(fields: [item_id], references: [id])
 }
 
 view Renamedclass {
@@ -105,6 +115,7 @@ view item {
   item_type   item_type     @relation(fields: [type_id], references: [id])
   item_effect item_effect[]
   item_price  Price[]
+  rune_price  profus_app_itemaveragepriceentry[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
