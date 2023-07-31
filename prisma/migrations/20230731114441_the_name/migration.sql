@@ -42,6 +42,18 @@ CREATE TABLE "RunesPrice" (
     CONSTRAINT "RunesPrice_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "profus_app_itemaveragepriceentry" (
+    "id" SERIAL NOT NULL,
+    "saved_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "price" INTEGER NOT NULL,
+    "item_id" INTEGER NOT NULL,
+    "server_id" INTEGER NOT NULL,
+    "user_id" INTEGER,
+
+    CONSTRAINT "profus_app_itemaveragepriceentry_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
@@ -59,6 +71,9 @@ CREATE UNIQUE INDEX "Price_id_key" ON "Price"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RunesPrice_id_key" ON "RunesPrice"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "profus_app_itemaveragepriceentry_id_key" ON "profus_app_itemaveragepriceentry"("id");
 
 -- AddForeignKey
 ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

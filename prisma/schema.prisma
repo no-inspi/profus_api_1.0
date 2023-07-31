@@ -44,6 +44,15 @@ model RunesPrice {
   createdAt DateTime @default(now())
 }
 
+model TauxItemBrisage {
+  id Int @id @unique @default(autoincrement())
+  id_item Int
+  taux Int
+  id_server Int
+  createdAt DateTime @default(now())
+  item      item     @relation(fields: [id_item], references: [id])
+}
+
 model profus_app_itemaveragepriceentry {
   id         Int      @id @unique @default(autoincrement())
   saved_date DateTime @default(now())
@@ -116,6 +125,7 @@ view item {
   item_effect item_effect[]
   item_price  Price[]
   rune_price  profus_app_itemaveragepriceentry[]
+  taux_item  TauxItemBrisage[]
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.

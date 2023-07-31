@@ -155,7 +155,7 @@ router.get('/item_price', async (req: any, res: any) => {
 })
 
 router.get('/rune_price', async (req: any, res: any) => {
-    console.log(req.query.id)
+    // console.log(req.query.id)
     if (req.query.id != "undefined") {
 
         const id = Number(req.query.id)
@@ -194,9 +194,104 @@ router.get('/rune_price', async (req: any, res: any) => {
         //         }
         //     },
         // })
-        res.json({"price": runes.rune_price[0].price})
+        console.log(runes.rune_price[0])
+        res.json({ "price": runes.rune_price[0].price })
     }
 })
+
+router.get('/item_taux', async (req: any, res: any) => {
+    // console.log(req.query.id)
+    if (req.query.id != "undefined") {
+
+        const id = Number(req.query.id)
+        const runes = await dbexport.item.findUnique({
+            where: {
+                id: id,
+            },
+            select: {
+                taux_item: {
+                    where: {
+                        id_item: id,
+                    },
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                    take: 1,
+                }
+            },
+        })
+        // console.log(runes.rune_price[0])
+        res.json(runes.taux_item)
+    }
+})
+
+router.get('/add_item_taux', async (req: any, res: any) => {
+    // console.log(req.query.id)
+    console.log(req.query)
+    if (req.query.id != "undefined") {
+
+        const id = Number(req.query.id)
+        const taux = await dbexport.TauxItemBrisage.create({
+            data: {
+                id_item: Number(req.query.id),
+                taux: Number(req.query.taux),
+                id_server: Number(req.query.serverid)
+            }
+        })
+        res.json(taux)
+    }
+})
+
+router.get('/get_item_taux', async (req: any, res: any) => {
+    // console.log(req.query.id)
+    console.log(req.query)
+    if (req.query.id != "undefined") {
+        const id = Number(req.query.id)
+        const runes = await dbexport.item.findUnique({
+            where: {
+                id: id,
+            },
+            select: {
+                taux_item: {
+                    where: {
+                        id_item: id,
+                    },
+                    orderBy: {
+                        createdAt: "asc",
+                    },
+                }
+            },
+        })
+        res.json(runes.taux_item)
+    }
+})
+
+router.get('/get_rune_price', async (req: any, res: any) => {
+    // console.log(req.query.id)
+    console.log(req.query)
+    if (req.query.id != "undefined") {
+        const id = Number(req.query.id)
+        const runes = await dbexport.item.findUnique({
+            where: {
+                id: id,
+            },
+            select: {
+                name_fr: true,
+                rune_price: {
+                    where: {
+                        item_id: id,
+                    },
+                    orderBy: {
+                        saved_date: "asc",
+                    },
+                }
+            },
+        })
+        res.json(runes)
+    }
+})
+
+
 
 
 module.exports = router;
