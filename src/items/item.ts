@@ -60,7 +60,7 @@ router.get('/get_item_filter', isAuthenticated, async (req: any, res: any) => {
                 where: {
                     name_fr: {
                         contains: req.query.contains,
-                        mode: 'insensitive',
+                        // mode: 'insensitive',
                     }
                 },
                 select: {
