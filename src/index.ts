@@ -13,6 +13,8 @@ var auth = require('./auth/auth.routes')
 const prisma = new PrismaClient()
 const app = express()
 
+const port = process.env.PORT || 3001
+
 app.use(express.json())
 app.use(cors());
 
@@ -46,7 +48,7 @@ app.get('/test', async (req, res) => {
   res.json(array_columns)
 })
 
-const server = app.listen(3001, () =>
+app.listen(port, () =>
   console.log(`
 🚀 Server ready at: http://localhost:3001`),
 )
