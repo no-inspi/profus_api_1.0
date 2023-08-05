@@ -9,6 +9,8 @@ var user = require('./user/user.routes')
 var import_data = require('./import_data')
 var item = require('./items/item')
 var auth = require('./auth/auth.routes')
+var brisage = require('./brisage/brisage')
+var graph = require('./items/graph')
 
 const prisma = new PrismaClient()
 const app = express()
@@ -17,12 +19,15 @@ const port = process.env.PORT || 3001
 
 app.use(express.json())
 app.use(cors());
+app.use(express.raw())
 
 // use routes
 app.use('/users', user)
 app.use('/data', import_data)
 app.use('/items', item)
 app.use('/auth', auth)
+app.use('/brisage', brisage)
+app.use('/graph', graph)
 
 app.get('/', async (req, res) => {
   res.json({ "status": "working" })

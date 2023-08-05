@@ -69,6 +69,11 @@ router.get('/get_item_filter', isAuthenticated, async (req: any, res: any) => {
                     desc_fr: true,
                     level: true,
                     price: true,
+                    item_effect: {
+                        where: {
+                            rune_item_id: { not: null }
+                        },
+                    }
                 },
                 orderBy: {
                     level: 'asc',
@@ -78,7 +83,6 @@ router.get('/get_item_filter', isAuthenticated, async (req: any, res: any) => {
     })
 
     let array_to_export = []
-
     for (let i = 0; i < item.length; i++) {
         for (let j = 0; j < item[i].item.length; j++) {
             array_to_export.push(item[i].item[j])
@@ -156,7 +160,8 @@ router.get('/item_price', async (req: any, res: any) => {
 
 router.get('/rune_price', async (req: any, res: any) => {
     // console.log(req.query.id)
-    if (req.query.id != "undefined") {
+    console.log(req.query.id)
+    if (req.query.id != "undefined" && req.query.id != "" && req.query.id != null) {
 
         const id = Number(req.query.id)
         const runes = await dbexport.item.findUnique({
@@ -194,13 +199,17 @@ router.get('/rune_price', async (req: any, res: any) => {
         //         }
         //     },
         // })
+        console.log(runes=="undefined")
         console.log(runes.rune_price[0])
         res.json({ "price": runes.rune_price[0].price })
+    }
+    else {
+        res.json({"error": "no id"})
     }
 })
 
 router.get('/item_taux', async (req: any, res: any) => {
-    // console.log(req.query.id)
+    
     if (req.query.id != "undefined") {
 
         const id = Number(req.query.id)
@@ -244,7 +253,6 @@ router.get('/add_item_taux', async (req: any, res: any) => {
 
 router.get('/get_item_taux', async (req: any, res: any) => {
     // console.log(req.query.id)
-    console.log(req.query)
     if (req.query.id != "undefined") {
         const id = Number(req.query.id)
         const runes = await dbexport.item.findUnique({
