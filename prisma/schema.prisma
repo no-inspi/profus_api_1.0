@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -33,7 +33,7 @@ model RefreshToken {
 /// This model has been renamed to 'Renamedclass' during introspection, because the original name 'class' is reserved.
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Renamedclass {
-  id            Int @unique
+  id            Int     @unique
   name_en       String? @db.VarChar(12)
   name_es       String? @db.VarChar(10)
   name_fr       String? @db.VarChar(10)
@@ -56,7 +56,7 @@ model class_spell {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model dungeon {
-  id      Int @unique
+  id      Int     @unique
   name_en String? @db.VarChar(32)
   name_es String? @db.VarChar(36)
   name_fr String? @db.VarChar(33)
@@ -64,39 +64,37 @@ model dungeon {
   name_pt String? @db.VarChar(54)
   name_it String? @db.VarChar(36)
   level   Int?
-
-
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model item {
-  id          Int @unique
-  name_en     String? @db.VarChar(67)
-  name_es     String? @db.VarChar(65)
-  name_fr     String? @db.VarChar(69)
-  name_de     String? @db.VarChar(71)
-  name_pt     String? @db.VarChar(63)
-  name_it     String? @db.VarChar(69)
+  id          Int               @unique
+  name_en     String?           @db.VarChar(67)
+  name_es     String?           @db.VarChar(65)
+  name_fr     String?           @db.VarChar(69)
+  name_de     String?           @db.VarChar(71)
+  name_pt     String?           @db.VarChar(63)
+  name_it     String?           @db.VarChar(69)
   type_id     Int
-  desc_en     String? @db.VarChar(1550)
-  desc_es     String? @db.VarChar(1649)
-  desc_fr     String? @db.VarChar(1680)
-  desc_de     String? @db.VarChar(1563)
-  desc_pt     String? @db.VarChar(1555)
-  desc_it     String? @db.VarChar(1080)
+  desc_en     String?           @db.VarChar(1550)
+  desc_es     String?           @db.VarChar(1649)
+  desc_fr     String?           @db.VarChar(1680)
+  desc_de     String?           @db.VarChar(1563)
+  desc_pt     String?           @db.VarChar(1555)
+  desc_it     String?           @db.VarChar(1080)
   icon_id     Int?
   level       Int?
   pods        Int?
   price       Int?
   item_set_id Int?
-  criteria    String? @db.VarChar(143)
+  criteria    String?           @db.VarChar(143)
   pet_food_xp Int?
   nuggets     Int?
-  item_type   item_type     @relation(fields: [type_id], references: [id])
+  item_type   item_type         @relation(fields: [type_id], references: [id])
   item_effect item_effect[]
   item_price  Price[]
   rune_price  runes_prices[]
-  taux_item  TauxItemBrisage[]
+  taux_item   TauxItemBrisage[]
 }
 
 model item_effect {
@@ -123,14 +121,13 @@ model item_effect {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model item_set {
-  id      Int @unique
+  id      Int     @unique
   name_en String? @db.VarChar(29)
   name_es String? @db.VarChar(39)
   name_fr String? @db.VarChar(33)
   name_de String? @db.VarChar(34)
   name_pt String? @db.VarChar(32)
   name_it String? @db.VarChar(34)
-
 }
 
 model item_set_damage {
@@ -204,7 +201,7 @@ model item_set_effect {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model item_type {
-  id         Int @unique
+  id         Int     @unique
   name_en    String? @db.VarChar(42)
   name_es    String? @db.VarChar(36)
   name_fr    String? @db.VarChar(36)
@@ -218,7 +215,7 @@ model item_type {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model job {
-  id      Int @unique
+  id      Int     @unique
   name_en String? @db.VarChar(12)
   name_es String? @db.VarChar(12)
   name_fr String? @db.VarChar(11)
@@ -226,7 +223,6 @@ model job {
   name_pt String? @db.VarChar(11)
   name_it String? @db.VarChar(12)
   icon_id Int?
-
 }
 
 model job_action {
@@ -273,17 +269,18 @@ model job_craft_ingredient {
 
 model runes_prices {
   id         Int      @id @default(autoincrement())
+  id_intern  Int
   price      Float
   item_id    Int
   server_id  Int
   user_id    Int?
   saved_date DateTime @db.Date
-  item      item     @relation(fields: [item_id], references: [id])
+  item       item     @relation(fields: [item_id], references: [id])
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model weapon {
-  id                     Int @unique
+  id                     Int  @unique
   criticalHitBonus       Int?
   min_range              Int?
   criticalHitProbability Int?
@@ -293,9 +290,9 @@ model weapon {
 }
 
 model TauxItemBrisage {
-  id Int @id @unique @default(autoincrement())
-  id_item Int
-  taux Int
+  id        Int      @id @unique @default(autoincrement())
+  id_item   Int
+  taux      Int
   id_server Int
   createdAt DateTime @default(now())
   item      item     @relation(fields: [id_item], references: [id])
@@ -307,4 +304,32 @@ model Price {
   price_t   Float
   createdAt DateTime @default(now())
   item      item     @relation(fields: [id_item], references: [id])
+}
+
+model i18n {
+  id   Int    @unique
+  fr   String
+  en   String
+  de   String
+  es   String
+  it   String
+  ja   String
+  pt   String
+  ru   String
+  nl   String
+  sort Int
+}
+
+model server {
+  id                    Int      @unique
+  openDate              DateTime @default(now())
+  language              String
+  restrictedToLanguages String
+  monoAccount           String
+  playable              String
+  comment_id            Int
+  community_id          Int
+  gameType_id           Int
+  name_id               Int
+  population_id         Int
 }
