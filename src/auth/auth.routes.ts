@@ -63,6 +63,7 @@ router.post('/login', async (req: any, res: any, next: any) => {
     }
 
     const existingUser = await findUserByPseudo(pseudo);
+    console.log("existing user: ",existingUser[0])
 
     if (!existingUser) {
       res.status(403);
@@ -73,6 +74,7 @@ router.post('/login', async (req: any, res: any, next: any) => {
 
     // const validPassword = await bcrypt.compare(password, existingUser.password);
     // const validPassword = "test"
+    console.log(senderPassword, existingUser)
     if (existingUser.password != senderPassword) {
       res.status(403);
       throw new Error('Invalid login credentials.');

@@ -4,332 +4,301 @@ generator client {
 }
 
 datasource db {
-  provider          = "mysql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-}
-
-model User {
-  id            Int            @id @unique @default(autoincrement())
-  email         String         @unique
-  password      String
-  pseudo        String         @unique
-  // birthDate         DateTime          @default(now())
-  refreshTokens RefreshToken[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @default(now()) @updatedAt
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model RefreshToken {
-  id          String   @id @unique @default(uuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @db.Date
   hashedToken String
+  id_         String   @map("id")
+  revoked     Int
+  updatedAt   DateTime @db.Date
   userId      Int
-  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  revoked     Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-}
-
-/// This model has been renamed to 'Renamedclass' during introspection, because the original name 'class' is reserved.
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model Renamedclass {
-  id            Int     @unique
-  name_en       String? @db.VarChar(12)
-  name_es       String? @db.VarChar(10)
-  name_fr       String? @db.VarChar(10)
-  name_de       String? @db.VarChar(15)
-  name_pt       String? @db.VarChar(10)
-  name_it       String? @db.VarChar(11)
-  male_look     String? @db.VarChar(13)
-  female_look   String? @db.VarChar(13)
-  male_colors   String? @db.VarChar(45)
-  female_colors String? @db.VarChar(46)
-
-  @@map("class")
-}
-
-model class_spell {
-  class_id Int?
-  spell_id Int?
-  id       Int  @id @default(autoincrement())
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model dungeon {
-  id      Int     @unique
-  name_en String? @db.VarChar(32)
-  name_es String? @db.VarChar(36)
-  name_fr String? @db.VarChar(33)
-  name_de String? @db.VarChar(42)
-  name_pt String? @db.VarChar(54)
-  name_it String? @db.VarChar(36)
-  level   Int?
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model item {
-  id          Int               @unique
-  name_en     String?           @db.VarChar(67)
-  name_es     String?           @db.VarChar(65)
-  name_fr     String?           @db.VarChar(69)
-  name_de     String?           @db.VarChar(71)
-  name_pt     String?           @db.VarChar(63)
-  name_it     String?           @db.VarChar(69)
-  type_id     Int
-  desc_en     String?           @db.VarChar(1550)
-  desc_es     String?           @db.VarChar(1649)
-  desc_fr     String?           @db.VarChar(1680)
-  desc_de     String?           @db.VarChar(1563)
-  desc_pt     String?           @db.VarChar(1555)
-  desc_it     String?           @db.VarChar(1080)
-  icon_id     Int?
-  level       Int?
-  pods        Int?
-  price       Int?
-  item_set_id Int?
-  criteria    String?           @db.VarChar(143)
-  pet_food_xp Int?
-  nuggets     Int?
-  item_type   item_type         @relation(fields: [type_id], references: [id])
-  item_effect item_effect[]
-  item_price  Price[]
-  rune_price  runes_prices[]
-  taux_item   TauxItemBrisage[]
-}
-
-model item_effect {
-  item_id      Int
-  effect_id    Int?
-  min          Int?
-  max          Int?
-  value        Int?
-  desc_fr      String?  @db.VarChar(72)
-  desc_en      String?  @db.VarChar(70)
-  desc_es      String?  @db.VarChar(87)
-  desc_pt      String?  @db.VarChar(71)
-  desc_de      String?  @db.VarChar(91)
-  desc_it      String?  @db.VarChar(74)
-  category     Int?
-  boost        String?  @db.VarChar(1)
-  power        Decimal? @db.Decimal(12, 9)
-  element_id   Int?
-  element_name String?  @db.VarChar(7)
-  rune_item_id String?  @db.VarChar(5)
-  id           Int      @id @default(autoincrement())
-  item         item     @relation(fields: [item_id], references: [id])
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model item_set {
-  id      Int     @unique
-  name_en String? @db.VarChar(29)
-  name_es String? @db.VarChar(39)
-  name_fr String? @db.VarChar(33)
-  name_de String? @db.VarChar(34)
-  name_pt String? @db.VarChar(32)
-  name_it String? @db.VarChar(34)
-}
-
-model item_set_damage {
-  id              Int     @id @default(autoincrement())
-  item_set_id     Int?
-  item_count      Int?
-  res_per_earth   String? @db.VarChar(2)
-  res_per_water   String? @db.VarChar(2)
-  res_per_air     String? @db.VarChar(2)
-  res_per_fire    String? @db.VarChar(2)
-  res_per_neutral String? @db.VarChar(2)
-  res_earth       String? @db.VarChar(3)
-  res_water       String? @db.VarChar(3)
-  res_air         String? @db.VarChar(3)
-  res_fire        String? @db.VarChar(3)
-  res_neutral     String? @db.VarChar(3)
-  res_crit        String? @db.VarChar(2)
-  res_pou         String? @db.VarChar(2)
-  PA              String? @db.VarChar(1)
-  PM              String? @db.VarChar(1)
-  PO              String? @db.VarChar(1)
-  Invo            String? @db.VarChar(1)
-  do_ren          String? @db.VarChar(1)
-  crit            String? @db.VarChar(2)
-  fui             String? @db.VarChar(3)
-  tac             String? @db.VarChar(3)
-  ret_pm          String? @db.VarChar(3)
-  ret_pa          String? @db.VarChar(3)
-  esq_pm          String? @db.VarChar(3)
-  esq_pa          String? @db.VarChar(3)
-  pp              String? @db.VarChar(3)
-  sasa            String? @db.VarChar(3)
-  vita            String? @db.VarChar(4)
-  ini             String? @db.VarChar(4)
-  pods            String? @db.VarChar(4)
-  pwr_all         String? @db.VarChar(3)
-  add_all         String? @db.VarChar(10)
-  add_neutral     String? @db.VarChar(2)
-  pwr_earth       String? @db.VarChar(3)
-  add_earth       String? @db.VarChar(2)
-  pwr_fire        String? @db.VarChar(3)
-  add_fire        String? @db.VarChar(2)
-  pwr_air         String? @db.VarChar(3)
-  add_air         String? @db.VarChar(2)
-  pwr_water       String? @db.VarChar(3)
-  add_water       String? @db.VarChar(2)
-  add_heal        String? @db.VarChar(2)
-  pwr_pi          String? @db.VarChar(2)
-  add_pi          String? @db.VarChar(2)
-  add_crit        String? @db.VarChar(2)
-  add_pou         String? @db.VarChar(2)
-  dmg_spell       String? @db.VarChar(10)
-  dmg_weapon      String? @db.VarChar(10)
-  dmg_range       String? @db.VarChar(10)
-  dmg_melee       String? @db.VarChar(10)
-}
-
-model item_set_effect {
-  id          Int     @id @default(autoincrement())
-  item_set_id Int?
-  item_count  Int?
-  max         Int?
-  effect_id   Int?
-  desc_fr     String? @db.VarChar(26)
-  desc_en     String? @db.VarChar(24)
-  desc_es     String? @db.VarChar(36)
-  desc_pt     String? @db.VarChar(31)
-  desc_de     String? @db.VarChar(40)
-  desc_it     String? @db.VarChar(36)
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model item_type {
-  id         Int     @unique
-  name_en    String? @db.VarChar(42)
-  name_es    String? @db.VarChar(36)
-  name_fr    String? @db.VarChar(36)
-  name_de    String? @db.VarChar(32)
-  name_pt    String? @db.VarChar(33)
-  name_it    String? @db.VarChar(32)
-  super_type Int?
-  category   Int?
-  item       item[]
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model job {
-  id      Int     @unique
-  name_en String? @db.VarChar(12)
-  name_es String? @db.VarChar(12)
-  name_fr String? @db.VarChar(11)
-  name_de String? @db.VarChar(17)
-  name_pt String? @db.VarChar(11)
-  name_it String? @db.VarChar(12)
-  icon_id Int?
-}
-
-model job_action {
-  id            Int     @id @default(autoincrement())
-  item_id       Int?
-  is_craft      String? @db.VarChar(1)
-  level         Int?
-  ingredientIds String? @db.VarChar(49)
-  quantities    String? @db.VarChar(30)
-  xp            Int?
-  job_id        Int?
-  name_en       String? @db.VarChar(45)
-  name_es       String? @db.VarChar(54)
-  name_fr       String? @db.VarChar(57)
-  name_de       String? @db.VarChar(61)
-  name_pt       String? @db.VarChar(52)
-  name_it       String? @db.VarChar(55)
-  icon_id       String? @db.VarChar(6)
-  price         String? @db.VarChar(5)
-  skill_name_en String? @db.VarChar(25)
-  skill_name_es String? @db.VarChar(32)
-  skill_name_fr String? @db.VarChar(36)
-  skill_name_de String? @db.VarChar(33)
-  skill_name_pt String? @db.VarChar(30)
-  skill_name_it String? @db.VarChar(39)
-}
-
-model job_craft_ingredient {
-  id            Int     @id @default(autoincrement())
-  item_id       Int?
-  ingredient_id Int?
-  quantity      Int?
-  name_en       String? @db.VarChar(40)
-  name_es       String? @db.VarChar(54)
-  name_fr       String? @db.VarChar(57)
-  name_de       String? @db.VarChar(62)
-  name_pt       String? @db.VarChar(52)
-  name_it       String? @db.VarChar(57)
-  icon_id       String? @db.VarChar(6)
-  type_id       String? @db.VarChar(3)
-  pods          String? @db.VarChar(3)
-  level         String? @db.VarChar(3)
-}
-
-model runes_prices {
-  id         Int      @id @default(autoincrement())
-  id_intern  Int
-  price      Float
-  item_id    Int
-  server_id  Int
-  user_id    Int?
-  saved_date DateTime @db.Date
-  item       item     @relation(fields: [item_id], references: [id])
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model weapon {
-  id                     Int  @unique
-  criticalHitBonus       Int?
-  min_range              Int?
-  criticalHitProbability Int?
-  range                  Int?
-  ap_cost                Int?
-  maxCastPerTurn         Int?
 }
 
 model TauxItemBrisage {
-  id        Int      @id @unique @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @db.Date
+  id_       Int      @map("id")
   id_item   Int
-  taux      Int
   id_server Int
-  createdAt DateTime @default(now())
-  item      item     @relation(fields: [id_item], references: [id])
+  taux      Int
 }
 
-model Price {
-  id        Int      @id @unique @default(autoincrement())
-  id_item   Int
-  price_t   Float
-  createdAt DateTime @default(now())
-  item      item     @relation(fields: [id_item], references: [id])
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @db.Date
+  email     String
+  id_       Int      @map("id")
+  password  String
+  pseudo    String
+  updatedAt DateTime @db.Date
 }
 
-model i18n {
-  id   Int    @unique
-  fr   String
-  en   String
-  de   String
-  es   String
-  it   String
-  ja   String
-  pt   String
-  ru   String
-  nl   String
-  sort Int
+model classdofus {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  female_colors String
+  female_look   String
+  id_           Int    @map("id")
+  male_colors   String
+  male_look     String
+  name_de       String
+  name_en       String
+  name_es       String
+  name_fr       String
+  name_it       String
+  name_pt       String
 }
 
-model server {
-  id                    Int      @unique
-  openDate              DateTime @default(now())
-  language              String
-  restrictedToLanguages String
-  monoAccount           String
-  playable              String
-  comment_id            Int
-  community_id          Int
-  gameType_id           Int
-  name_id               Int
-  population_id         Int
+model class_spell {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  class_id Int
+  id_      Int    @map("id")
+  spell_id Int
+}
+
+model dungeon {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  id_     Int    @map("id")
+  level   Int
+  name_de String
+  name_en String
+  name_es String
+  name_fr String
+  name_it String
+  name_pt String
+}
+
+model item {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  criteria    String
+  desc_de     String
+  desc_en     String
+  desc_es     String
+  desc_fr     String
+  desc_it     String
+  desc_pt     String
+  icon_id     Int
+  id_         Int    @map("id")
+  item_set_id Int
+  level       Int
+  name_de     String
+  name_en     String
+  name_es     String
+  name_fr     String
+  name_it     String
+  name_pt     String
+  nuggets     Int
+  pet_food_xp Int
+  pods        Int
+  price       Int
+  type_id     Int
+}
+
+model item_effect {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  boost        String
+  category     Int
+  desc_de      String
+  desc_en      String
+  desc_es      String
+  desc_fr      String
+  desc_it      String
+  desc_pt      String
+  effect_id    Int
+  element_id   Int
+  element_name String
+  id_          Int    @map("id")
+  item_id      Int
+  max          Int
+  min          Int
+  /// Multiple data types found: Float: 8.8%, Int: 91.2% out of 1000 sampled entries
+  power        Json
+  rune_item_id String
+  value        Int
+}
+
+model item_set {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  id_     Int    @map("id")
+  name_de String
+  name_en String
+  name_es String
+  name_fr String
+  name_it String
+  name_pt String
+}
+
+model item_set_damage {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  Invo            String
+  PA              String
+  PM              String
+  PO              String
+  add_air         String
+  add_all         String
+  add_crit        String
+  add_earth       String
+  add_fire        String
+  add_heal        String
+  add_neutral     String
+  add_pi          String
+  add_pou         String
+  add_water       String
+  crit            String
+  dmg_melee       String
+  dmg_range       String
+  dmg_spell       String
+  dmg_weapon      String
+  do_ren          String
+  esq_pa          String
+  esq_pm          String
+  fui             String
+  id_             Int    @map("id")
+  ini             String
+  item_count      Int
+  item_set_id     Int
+  pods            String
+  pp              String
+  pwr_air         String
+  pwr_all         String
+  pwr_earth       String
+  pwr_fire        String
+  pwr_pi          String
+  pwr_water       String
+  res_air         String
+  res_crit        String
+  res_earth       String
+  res_fire        String
+  res_neutral     String
+  res_per_air     String
+  res_per_earth   String
+  res_per_fire    String
+  res_per_neutral String
+  res_per_water   String
+  res_pou         String
+  res_water       String
+  ret_pa          String
+  ret_pm          String
+  sasa            String
+  tac             String
+  vita            String
+}
+
+model item_set_effect {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  desc_de     String
+  desc_en     String
+  desc_es     String
+  desc_fr     String
+  desc_it     String
+  desc_pt     String
+  effect_id   Int
+  id_         Int    @map("id")
+  item_count  Int
+  item_set_id Int
+  max         Int
+}
+
+model item_type {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  category   Int
+  id_        Int    @map("id")
+  name_de    String
+  name_en    String
+  name_es    String
+  name_fr    String
+  name_it    String
+  name_pt    String
+  super_type Int
+}
+
+model job {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  icon_id Int
+  id_     Int    @map("id")
+  name_de String
+  name_en String
+  name_es String
+  name_fr String
+  name_it String
+  name_pt String
+}
+
+model job_action {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  icon_id       String
+  id_           Int    @map("id")
+  ingredientIds String
+  is_craft      String
+  item_id       Int
+  job_id        Int
+  level         Int
+  name_de       String
+  name_en       String
+  name_es       String
+  name_fr       String
+  name_it       String
+  name_pt       String
+  price         String
+  quantities    String
+  skill_name_de String
+  skill_name_en String
+  skill_name_es String
+  skill_name_fr String
+  skill_name_it String
+  skill_name_pt String
+  xp            Int
+}
+
+model job_craft_ingredient {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  icon_id       String
+  id_           Int    @map("id")
+  ingredient_id Int
+  item_id       Int
+  level         String
+  name_de       String
+  name_en       String
+  name_es       String
+  name_fr       String
+  name_it       String
+  name_pt       String
+  pods          String
+  quantity      Int
+  type_id       String
+}
+
+model runes_prices {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id_        Int      @map("id")
+  id_intern  Int
+  item_id    Int
+  price      Int
+  saved_date DateTime @db.Date
+  server_id  Int
+  user_id    Int
+}
+
+model server_list {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  en        String
+  es        String
+  fr        String
+  id_       Int    @map("id")
+  name_id   Int
+  server_id Int
+}
+
+model weapon {
+  id                     String @id @default(auto()) @map("_id") @db.ObjectId
+  ap_cost                Int
+  criticalHitBonus       Int
+  criticalHitProbability Int
+  id_                    Int    @map("id")
+  maxCastPerTurn         Int
+  min_range              Int
+  range                  Int
 }

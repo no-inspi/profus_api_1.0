@@ -4,7 +4,7 @@ const { dbexport } = require('../utils/db');
 const router = express.Router();
 const { isAuthenticated } = require('../middlewares');
 
-router.get('/get_users', isAuthenticated, async (req: any, res: any) => {
+router.get('/get_users', async (req: any, res: any) => {
     const users = await dbexport.user.findMany()
 
     res.json(users);

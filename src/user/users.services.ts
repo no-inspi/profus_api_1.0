@@ -2,7 +2,7 @@ const { dbexport } = require('../utils/db');
 import * as crypto from 'crypto';
 
 export function findUserByEmail(email: any) {
-    return dbexport.user.findUnique({
+    return dbexport.user.findMany({
         where: {
             email
         },
@@ -10,7 +10,7 @@ export function findUserByEmail(email: any) {
 }
 
 export function findUserByPseudo(pseudo: any) {
-    return dbexport.user.findUnique({
+    return dbexport.user.findMany({
         where: {
             pseudo
         },
@@ -34,7 +34,7 @@ export function createUser(user: any) {
 }
 
 export function findUserById(id: any) {
-    return dbexport.user.findUnique({
+    return dbexport.user.findMany({
         where: {
             id,
         },
