@@ -31,7 +31,7 @@ router.post('/get_brisage_data', async (req: any, res: any) => {
     };
 
     const id = Number(req.body.item_id)
-    console.log(id)
+    console.log("test begin")
     const item = await dbexport.item.findMany({
         where: {
             id_: id,
@@ -49,6 +49,7 @@ router.post('/get_brisage_data', async (req: any, res: any) => {
             }
         },
     })
+    console.log("test begin 2")
 
     item[0].item_effect.forEach(async function (value: any) {
         let idExist = req.body.stats.find((i: any) => Number(i.id) === Number(value.rune_item_id));
@@ -85,6 +86,7 @@ router.post('/get_brisage_data', async (req: any, res: any) => {
             "price": runes ? idExistRunePrice ? Number(idExistRunePrice.value) : runes.rune_price[0].price : 0,
         })
     });
+
     // jsp pourquoi ca marche mais ça permet de bien remplir le tableau des runes
     let runes = await dbexport.item.findUnique({
         where: {
@@ -104,6 +106,7 @@ router.post('/get_brisage_data', async (req: any, res: any) => {
             }
         },
     })
+    console.log("test begin 3")
     // /////////////////////////////////////////////////////////////////////////
     let [QuantitysansFocus, QuantityAvecFocus, PrixAvecFocus, PrixSansFocus, totalPrice]: any = calculBrisage(objectToExport.stats, objectToExport.runesPrice, req.body.taux)
     objectToExport.quantityWithFocus = QuantityAvecFocus;
@@ -144,7 +147,6 @@ const calculBrisage = (stats: any, runePrice: any, taux: any) => {
             WeightArray.push({"poids": stats[i].power,"poidsLigne": calculPoidsLigne})
         }
     }
-    console.log("weightArray: ", WeightArray, totalWeight)
     for (let j = 0; j < WeightArray.length; j++) {
         var valueFocus = (WeightArray[j].poidsLigne+((totalWeight-WeightArray[j].poidsLigne)/2))*taux/100/WeightArray[j].poids
         var valueSansFocus =(WeightArray[j].poidsLigne)*taux/100/WeightArray[j].poids
