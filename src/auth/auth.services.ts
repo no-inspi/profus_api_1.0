@@ -6,25 +6,25 @@ export function addRefreshTokenToWhitelist({ jti, refreshToken, userId }: any) {
   console.log(hashToken(refreshToken))
   return dbexport.refreshToken.create({
     data: {
-      id: jti,
+      id_: jti,
       hashedToken: hashToken(refreshToken),
       userId: userId,
     },
   });
 }
 
-export function findRefreshTokenById(id: any) {
+export function findRefreshTokenById(id_: any) {
   return dbexport.refreshToken.findUnique({
     where: {
-      id,
+      id_,
     },
   });
 }
 
-export function deleteRefreshToken(id: any) {
+export function deleteRefreshToken(id_: any) {
   return dbexport.refreshToken.update({
     where: {
-      id,
+      id_,
     },
     data: {
       revoked: true

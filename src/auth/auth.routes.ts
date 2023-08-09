@@ -8,7 +8,8 @@ import {
   createUserByEmailAndPassword,
   findUserById,
   createUser,
-  findUserByPseudo
+  findUserByPseudo,
+  getLastIdUser
 } from '../user/users.services';
 
 const { generateTokens } = require('../utils/jwt');
@@ -34,16 +35,19 @@ router.post('/register', async (req: any, res: any, next: any) => {
     }
 
     const existingUser = await findUserByEmail(email);
-
-    if (existingUser) {
+    console.log(existingUser)
+    if (existingUser[0]) {
       res.status(400);
       throw new Error('Email already in use.');
     }
 
-    const user = await createUser({ email, password, pseudo });
+    const lastId = await getLastIdUser()
+    console.log(lastId)
+    let id_ = lastId[0].id_ + 1
+    const user = await createUser({ email, password, pseudo, id_});
     const jti = uuidv4();
     const { accessToken, refreshToken } = generateTokens(user, jti);
-    await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id });
+    await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id_ });
 
     res.json({
       accessToken,
@@ -74,17 +78,17 @@ router.post('/login', async (req: any, res: any, next: any) => {
 
     // const validPassword = await bcrypt.compare(password, existingUser.password);
     // const validPassword = "test"
-    console.log(senderPassword, existingUser)
-    if (existingUser.password != senderPassword) {
+    console.log("test:",senderPassword, existingUser[0].password)
+    if (existingUser[0].password != senderPassword) {
       res.status(403);
       throw new Error('Invalid login credentials.');
     }
 
     const jti = uuidv4();
-    const { accessToken, refreshToken } = generateTokens(existingUser, jti);
+    const { accessToken, refreshToken } = generateTokens(existingUser[0], jti);
     // console.log(accessToken, refreshToken)
 
-    await addRefreshTokenToWhitelist({ jti, refreshToken, userId: existingUser.id });
+    await addRefreshTokenToWhitelist({ jti, refreshToken, userId: existingUser[0].id_ });
 
     res.json({
       accessToken,

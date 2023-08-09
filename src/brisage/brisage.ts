@@ -8,7 +8,7 @@ const { isAuthenticated } = require('../middlewares');
 var express = require('express')
 const router = express.Router();
 
-router.post('/get_brisage_data', isAuthenticated, async (req: any, res: any) => {
+router.post('/get_brisage_data', async (req: any, res: any) => {
 
     type objectToExportType = {
         stats: any[],
@@ -31,9 +31,10 @@ router.post('/get_brisage_data', isAuthenticated, async (req: any, res: any) => 
     };
 
     const id = Number(req.body.item_id)
+    console.log(id)
     const item = await dbexport.item.findMany({
         where: {
-            id: id,
+            id_: id,
         },
         select: {
             name_fr: true,
@@ -43,7 +44,7 @@ router.post('/get_brisage_data', isAuthenticated, async (req: any, res: any) => 
             item_effect: {
                 where: {
                     item_id: id,
-                    rune_item_id: { not: null }
+                    rune_item_id: { not: -100 }
                 },
             }
         },
@@ -51,7 +52,6 @@ router.post('/get_brisage_data', isAuthenticated, async (req: any, res: any) => 
 
     item[0].item_effect.forEach(async function (value: any) {
         let idExist = req.body.stats.find((i: any) => Number(i.id) === Number(value.rune_item_id));
-        console.log(idExist)
         objectToExport.stats.push(
             { "id_rune": idExist ? idExist.id.toString() : value.rune_item_id, 
             "value": idExist ? Number(idExist.value) : median([value.min, value.max]), 
@@ -63,7 +63,7 @@ router.post('/get_brisage_data', isAuthenticated, async (req: any, res: any) => 
         let idRunes = Number(value.rune_item_id);
         const runes = await dbexport.item.findUnique({
             where: {
-                id: idRunes,
+                id_: idRunes,
                 type_id: 78,
             },
             select: {
@@ -79,9 +79,7 @@ router.post('/get_brisage_data', isAuthenticated, async (req: any, res: any) => 
                 }
             },
         })
-        console.log(runes)
         let idExistRunePrice = req.body.runesPrice.find((i: any) => Number(i.id) === Number(runes ? runes.rune_price[0].item_id : 0));
-        console.log("id rune price", idExistRunePrice)
         objectToExport.runesPrice.push({
             "id_rune": runes ? idExistRunePrice ? Number(idExistRunePrice.id) : runes.rune_price[0].item_id : 0,
             "price": runes ? idExistRunePrice ? Number(idExistRunePrice.value) : runes.rune_price[0].price : 0,
@@ -90,7 +88,7 @@ router.post('/get_brisage_data', isAuthenticated, async (req: any, res: any) => 
     // jsp pourquoi ca marche mais ça permet de bien remplir le tableau des runes
     let runes = await dbexport.item.findUnique({
         where: {
-            id: 11645,
+            id_: 11645,
             type_id: 78,
         },
         select: {

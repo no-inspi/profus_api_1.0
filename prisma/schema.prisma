@@ -10,34 +10,37 @@ datasource db {
 
 model RefreshToken {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt   DateTime @db.Date
+  createdAt   DateTime @db.Date @default(now())
   hashedToken String
   id_         String   @map("id")
-  revoked     Int
-  updatedAt   DateTime @db.Date
+  revoked     Boolean @default(false)
+  updatedAt   DateTime @db.Date @default(now())
   userId      Int
+  User        User     @relation(fields: [userId], references: [id_], onDelete: Cascade)
 }
 
 model TauxItemBrisage {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @db.Date
-  id_       Int      @map("id")
+  createdAt DateTime @db.Date @default(now())
+  id_       Int?      @map("id")
   id_item   Int
   id_server Int
   taux      Int
+  item      item     @relation(fields: [id_item], references: [id_])
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @db.Date
-  email     String
-  id_       Int      @map("id")
-  password  String
-  pseudo    String
-  updatedAt DateTime @db.Date
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime       @db.Date @default(now())
+  email        String
+  id_          Int            @unique @map("id")
+  password     String
+  pseudo       String
+  updatedAt    DateTime       @db.Date @default(now())
+  refreshToken RefreshToken[]
 }
 
-model classdofus {
+model classs {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
   female_colors String
   female_look   String
@@ -59,6 +62,21 @@ model class_spell {
   spell_id Int
 }
 
+model classdofus {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  female_colors String
+  female_look   String
+  id_           Int    @map("id")
+  male_colors   String
+  male_look     String
+  name_de       String
+  name_en       String
+  name_es       String
+  name_fr       String
+  name_it       String
+  name_pt       String
+}
+
 model dungeon {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   id_     Int    @map("id")
@@ -72,7 +90,7 @@ model dungeon {
 }
 
 model item {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
   criteria    String
   desc_de     String
   desc_en     String
@@ -81,7 +99,7 @@ model item {
   desc_it     String
   desc_pt     String
   icon_id     Int
-  id_         Int    @map("id")
+  id_         Int               @unique @map("id")
   item_set_id Int
   level       Int
   name_de     String
@@ -95,6 +113,10 @@ model item {
   pods        Int
   price       Int
   type_id     Int
+  rune_price  runes_prices[]
+  taux_item   TauxItemBrisage[]
+  item_effect item_effect[]
+  item_type   item_type         @relation(fields: [type_id], references: [id_])
 }
 
 model item_effect {
@@ -116,8 +138,9 @@ model item_effect {
   min          Int
   /// Multiple data types found: Float: 8.8%, Int: 91.2% out of 1000 sampled entries
   power        Json
-  rune_item_id String
+  rune_item_id Int
   value        Int
+  item         item   @relation(fields: [item_id], references: [id_])
 }
 
 model item_set {
@@ -202,10 +225,37 @@ model item_set_effect {
   max         Int
 }
 
+model item_test {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  criteria    String
+  desc_de     String
+  desc_en     String
+  desc_es     String
+  desc_fr     String
+  desc_it     String
+  desc_pt     String
+  icon_id     Int
+  id_         Int    @map("id")
+  item_set_id Int
+  level       Int
+  name_de     String
+  name_en     String
+  name_es     String
+  name_fr     String
+  name_it     String
+  name_pt     String
+  nuggets     Int
+  pet_food_xp Int
+  pods        Int
+  price       Int
+  type_id     String
+  //item_type   item_type @relation(fields: [type_id], references: [id_])
+}
+
 model item_type {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
   category   Int
-  id_        Int    @map("id")
+  id_        Int    @unique @map("id")
   name_de    String
   name_en    String
   name_es    String
@@ -213,18 +263,20 @@ model item_type {
   name_it    String
   name_pt    String
   super_type Int
+  item       item[]
 }
 
 model job {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  icon_id Int
-  id_     Int    @map("id")
-  name_de String
-  name_en String
-  name_es String
-  name_fr String
-  name_it String
-  name_pt String
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  icon_id    Int
+  id_        Int          @unique @map("id")
+  name_de    String
+  name_en    String
+  name_es    String
+  name_fr    String
+  name_it    String
+  name_pt    String
+  job_action job_action[]
 }
 
 model job_action {
@@ -251,6 +303,7 @@ model job_action {
   skill_name_it String
   skill_name_pt String
   xp            Int
+  job           job    @relation(fields: [job_id], references: [id_])
 }
 
 model job_craft_ingredient {
@@ -280,6 +333,7 @@ model runes_prices {
   saved_date DateTime @db.Date
   server_id  Int
   user_id    Int
+  item       item     @relation(fields: [item_id], references: [id_])
 }
 
 model server_list {

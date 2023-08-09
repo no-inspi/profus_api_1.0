@@ -34,23 +34,16 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/test', async (req, res) => {
-  var array_columns = []
-  let item_test = Prisma.dmmf.datamodel.models.find(model => model.name === "Item")
-  // console.log("Account fields:", Prisma.dmmf.datamodel.models.find(model => model.name === "Item")?.fields.find(field => typeof field.relationFromFields != type[]))
-  // console.log(item_test?.fields[0].relationName)
-
-  if (item_test) {
-    for (let i = 0; i < item_test.fields.length; i++) {
-      let element = item_test.fields[i];
-      if (typeof element.relationName === "undefined") {
-        console.log(element)
-        array_columns.push([element.name, element.type])
-      }
+  const allUsers = await prisma.item.findMany({
+    where: {
+      id_: 44,
+    },
+    include: {
+      item_effect: true,
     }
-  }
-  
-
-  res.json(array_columns)
+  })
+  console.log(allUsers)
+  res.json(allUsers)
 })
 
 app.listen(port, () =>

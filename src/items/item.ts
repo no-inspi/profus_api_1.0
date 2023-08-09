@@ -47,7 +47,7 @@ router.get('/get_all_item', isAuthenticated, async (req: any, res: any) => {
 })
 
 
-router.get('/get_item_filter', isAuthenticated, async (req: any, res: any) => {
+router.get('/get_item_filter', async (req: any, res: any) => {
 
     const item = await dbexport.item_type.findMany({
         where: {
@@ -60,18 +60,18 @@ router.get('/get_item_filter', isAuthenticated, async (req: any, res: any) => {
                 where: {
                     name_fr: {
                         contains: req.query.contains,
-                        // mode: 'insensitive',
+                        mode: 'insensitive',
                     }
                 },
                 select: {
-                    id: true,
+                    id_: true,
                     name_fr: true,
                     desc_fr: true,
                     level: true,
                     price: true,
                     item_effect: {
                         where: {
-                            rune_item_id: { not: null }
+                            rune_item_id: { not: -100 }
                         },
                     }
                 },
@@ -166,7 +166,7 @@ router.get('/rune_price', async (req: any, res: any) => {
         const id = Number(req.query.id)
         const runes = await dbexport.item.findUnique({
             where: {
-                id: id,
+                id_: id,
                 type_id: 78,
             },
             select: {
@@ -215,7 +215,7 @@ router.get('/item_taux', async (req: any, res: any) => {
         const id = Number(req.query.id)
         const runes = await dbexport.item.findUnique({
             where: {
-                id: id,
+                id_: id,
             },
             select: {
                 taux_item: {
@@ -257,7 +257,7 @@ router.get('/get_item_taux', async (req: any, res: any) => {
         const id = Number(req.query.id)
         const runes = await dbexport.item.findUnique({
             where: {
-                id: id,
+                id_: id,
             },
             select: {
                 taux_item: {
@@ -281,7 +281,7 @@ router.get('/get_rune_price', async (req: any, res: any) => {
         const id = Number(req.query.id)
         const runes = await dbexport.item.findUnique({
             where: {
-                id: id,
+                id_: id,
             },
             select: {
                 name_fr: true,

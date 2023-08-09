@@ -28,7 +28,8 @@ export function createUser(user: any) {
     user.password = crypto.createHash('sha256').update(user.password).digest('hex');
     console.log(user)
     return dbexport.user.create({
-        data: user,
+        data:
+            user,
     });
     // return 'test'
 }
@@ -48,6 +49,14 @@ export function updateUserById(id: any, user: any) {
         },
         data: user
     });
+}
+
+export function getLastIdUser() {
+    return dbexport.user.findMany({
+        orderBy: {
+            id_: 'desc'
+        }
+    })
 }
 
 
