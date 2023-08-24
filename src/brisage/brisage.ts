@@ -54,12 +54,13 @@ router.post('/get_brisage_data', async (req: any, res: any) => {
     item[0].item_effect.forEach(async function (value: any) {
         let idExist = req.body.stats.find((i: any) => Number(i.id) === Number(value.rune_item_id));
         objectToExport.stats.push(
-            { "id_rune": idExist ? idExist.id.toString() : value.rune_item_id, 
-            "value": idExist ? Number(idExist.value) : median([value.min, value.max]), 
-            "power": value.power, 
-            "desc_fr": value.desc_fr,
-            "level": item[0].level 
-        })
+            {
+                "id_rune": idExist ? idExist.id.toString() : value.rune_item_id,
+                "value": idExist ? Number(idExist.value) : median([value.min, value.max]),
+                "power": value.power,
+                "desc_fr": value.desc_fr,
+                "level": item[0].level
+            })
 
         let idRunes = Number(value.rune_item_id);
         const runes = await dbexport.item.findUnique({
@@ -135,30 +136,89 @@ const calculBrisage = (stats: any, runePrice: any, taux: any) => {
 
     for (let i = 0; i < stats.length; i++) {
 
-        var calculPoidsLigne = ((3*stats[i].value*stats[i].power*stats[i].level)/200)+1
+        var calculPoidsLigne = ((3 * stats[i].value * stats[i].power * stats[i].level) / 200) + 1
 
         // totalWeight+=calculPoidsLigne
-        calculPoidsLigne>=0 ? totalWeight+=calculPoidsLigne : null;
+        calculPoidsLigne >= 0 ? totalWeight += calculPoidsLigne : null;
 
         if (stats[i].desc_fr == "Vitalité" || stats[i].desc_fr == "Initiative" || stats[i].desc_fr == "Pods") {
-            WeightArray.push({"poids": 1,"poidsLigne": calculPoidsLigne})
+            WeightArray.push({ "poids": 1, "poidsLigne": calculPoidsLigne })
         }
         else {
-            WeightArray.push({"poids": stats[i].power,"poidsLigne": calculPoidsLigne})
+            WeightArray.push({ "poids": stats[i].power, "poidsLigne": calculPoidsLigne })
         }
     }
     for (let j = 0; j < WeightArray.length; j++) {
-        var valueFocus = (WeightArray[j].poidsLigne+((totalWeight-WeightArray[j].poidsLigne)/2))*taux/100/WeightArray[j].poids
-        var valueSansFocus =(WeightArray[j].poidsLigne)*taux/100/WeightArray[j].poids
+        var valueFocus = (WeightArray[j].poidsLigne + ((totalWeight - WeightArray[j].poidsLigne) / 2)) * taux / 100 / WeightArray[j].poids
+        var valueSansFocus = (WeightArray[j].poidsLigne) * taux / 100 / WeightArray[j].poids
 
         QuantityAvecFocus.push(Math.floor(valueFocus))
         QuantitysansFocus.push(Math.floor(valueSansFocus))
-        PrixAvecFocus.push(Math.abs(Math.floor(valueFocus*runePrice[j].price)))
-        PrixSansFocus.push(Math.abs(Math.floor(valueSansFocus*runePrice[j].price)))
-        totalPrice+=Math.abs(Math.floor(valueSansFocus*runePrice[j].price))
+        PrixAvecFocus.push(Math.abs(Math.floor(valueFocus * runePrice[j].price)))
+        PrixSansFocus.push(Math.abs(Math.floor(valueSansFocus * runePrice[j].price)))
+        totalPrice += Math.abs(Math.floor(valueSansFocus * runePrice[j].price))
     }
     return [QuantitysansFocus, QuantityAvecFocus, PrixAvecFocus, PrixSansFocus, totalPrice]
-    
+
 }
+
+router.post('/test', async (req: any, res: any) => {
+
+    type objectToExportType = {
+        stats: any[],
+        runesPrice: any[],
+        quantityWithFocus: any[],
+        quantityWithoutFocus: any[],
+        priceWithFocus: any[],
+        priceWithoutFocus: any[],
+        totalWithoutFocus: any[]
+    }
+
+    let objectToExport: objectToExportType = {
+        stats: [],
+        runesPrice: [],
+        quantityWithFocus: [],
+        quantityWithoutFocus: [],
+        priceWithFocus: [],
+        priceWithoutFocus: [],
+        totalWithoutFocus: []
+    };
+
+    const id = Number(req.body.item_id)
+
+    const item = await dbexport.itemview.findUnique({
+        where: {
+            id_: id
+        }
+    })
+
+    item.itemeffect.forEach((value: any) => {
+        let idExist = req.body.stats.find((i: any) => Number(i.id) === Number(value.rune_item_id));
+        objectToExport.stats.push(
+            {
+                "id_rune": idExist ? idExist.id.toString() : value.rune_item_id,
+                "value": idExist ? Number(idExist.value) : median([value.min, value.max]),
+                "power": value.power,
+                "desc_fr": value.desc_fr,
+                "level": item.level
+            }
+        )
+        let idExistRunePrice = req.body.runesPrice.find((i: any) => Number(i.id) === Number(value.runePrice[0].item_id));
+        objectToExport.runesPrice.push({
+            "id_rune": idExistRunePrice ? Number(idExistRunePrice.id) : value.runePrice[0].item_id,
+            "price": idExistRunePrice ? Number(idExistRunePrice.value) : value.runePrice[0].price,
+        })
+    });
+
+    let [QuantitysansFocus, QuantityAvecFocus, PrixAvecFocus, PrixSansFocus, totalPrice]: any = calculBrisage(objectToExport.stats, objectToExport.runesPrice, req.body.taux)
+    objectToExport.quantityWithFocus = QuantityAvecFocus;
+    objectToExport.quantityWithoutFocus = QuantitysansFocus;
+    objectToExport.priceWithFocus = PrixAvecFocus;
+    objectToExport.priceWithoutFocus = PrixSansFocus;
+    objectToExport.totalWithoutFocus = totalPrice;
+
+    res.json(objectToExport)
+
+})
 
 module.exports = router;

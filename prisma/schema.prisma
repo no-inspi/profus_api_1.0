@@ -356,3 +356,30 @@ model weapon {
   min_range              Int
   range                  Int
 }
+
+model itemview {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  criteria    String
+  desc_de     String
+  desc_en     String
+  desc_es     String
+  desc_fr     String
+  desc_it     String
+  desc_pt     String
+  icon_id     Int
+  id_         Int               @unique @map("id")
+  item_set_id Int
+  level       Int
+  name_de     String
+  name_en     String
+  name_es     String
+  name_fr     String
+  name_it     String
+  name_pt     String
+  nuggets     Int
+  pet_food_xp Int
+  pods        Int
+  price       Int
+  type_id     Int
+  itemeffect Json[]
+}
