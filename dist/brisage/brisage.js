@@ -46,7 +46,8 @@ router.post('/get_brisage_data', (req, res) => __awaiter(void 0, void 0, void 0,
     item[0].item_effect.forEach(function (value) {
         return __awaiter(this, void 0, void 0, function* () {
             let idExist = req.body.stats.find((i) => Number(i.id) === Number(value.rune_item_id));
-            objectToExport.stats.push({ "id_rune": idExist ? idExist.id.toString() : value.rune_item_id,
+            objectToExport.stats.push({
+                "id_rune": idExist ? idExist.id.toString() : value.rune_item_id,
                 "value": idExist ? Number(idExist.value) : median([value.min, value.max]),
                 "power": value.power,
                 "desc_fr": value.desc_fr,
@@ -141,5 +142,44 @@ const calculBrisage = (stats, runePrice, taux) => {
     }
     return [QuantitysansFocus, QuantityAvecFocus, PrixAvecFocus, PrixSansFocus, totalPrice];
 };
+router.post('/test', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let objectToExport = {
+        stats: [],
+        runesPrice: [],
+        quantityWithFocus: [],
+        quantityWithoutFocus: [],
+        priceWithFocus: [],
+        priceWithoutFocus: [],
+        totalWithoutFocus: []
+    };
+    const id = Number(req.body.item_id);
+    const item = yield dbexport.itemview.findUnique({
+        where: {
+            id_: id
+        }
+    });
+    item.itemeffect.forEach((value) => {
+        let idExist = req.body.stats.find((i) => Number(i.id) === Number(value.rune_item_id));
+        objectToExport.stats.push({
+            "id_rune": idExist ? idExist.id.toString() : value.rune_item_id,
+            "value": idExist ? Number(idExist.value) : median([value.min, value.max]),
+            "power": value.power,
+            "desc_fr": value.desc_fr,
+            "level": item.level
+        });
+        let idExistRunePrice = req.body.runesPrice.find((i) => Number(i.id) === Number(value.runePrice[0].item_id));
+        objectToExport.runesPrice.push({
+            "id_rune": idExistRunePrice ? Number(idExistRunePrice.id) : value.runePrice[0].item_id,
+            "price": idExistRunePrice ? Number(idExistRunePrice.value) : value.runePrice[0].price,
+        });
+    });
+    let [QuantitysansFocus, QuantityAvecFocus, PrixAvecFocus, PrixSansFocus, totalPrice] = calculBrisage(objectToExport.stats, objectToExport.runesPrice, req.body.taux);
+    objectToExport.quantityWithFocus = QuantityAvecFocus;
+    objectToExport.quantityWithoutFocus = QuantitysansFocus;
+    objectToExport.priceWithFocus = PrixAvecFocus;
+    objectToExport.priceWithoutFocus = PrixSansFocus;
+    objectToExport.totalWithoutFocus = totalPrice;
+    res.json(objectToExport);
+}));
 module.exports = router;
 //# sourceMappingURL=brisage.js.map
