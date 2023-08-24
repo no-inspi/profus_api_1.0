@@ -45,11 +45,16 @@ const { hashToken } = require('../utils/hashToken');
 const crypto = __importStar(require("crypto"));
 const router = express.Router();
 router.post('/register', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body);
     try {
-        const { email, password, pseudo } = req.body;
-        if (!email || !password) {
+        const { email, password, passwordConfirm, pseudo } = req.body;
+        if (!email || !password || !passwordConfirm) {
             res.status(400);
             throw new Error('You must provide an email and a password.');
+        }
+        if (passwordConfirm != password) {
+            res.status(400);
+            throw new Error('Password are different');
         }
         const existingUser = yield (0, users_services_1.findUserByEmail)(email);
         console.log(existingUser);

@@ -26,12 +26,18 @@ import * as crypto from 'crypto';
 const router = express.Router();
 
 router.post('/register', async (req: any, res: any, next: any) => {
+  console.log(req.body)
   try {
-    const { email, password, pseudo } = req.body;
+    const { email, password, passwordConfirm, pseudo } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password || !passwordConfirm) {
       res.status(400);
       throw new Error('You must provide an email and a password.');
+    }
+
+    if (passwordConfirm != password) {
+      res.status(400);
+      throw new Error('Password are different');
     }
 
     const existingUser = await findUserByEmail(email);
