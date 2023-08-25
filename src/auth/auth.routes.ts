@@ -32,11 +32,13 @@ router.post('/register', async (req: any, res: any, next: any) => {
 
     if (!email || !password || !passwordConfirm) {
       res.status(400);
-      throw new Error('You must provide an email and a password.');
+      res.json({ "error": "Certains champs ne sont pas remplis"})
+      // throw new Error('You must provide an email and a password.');
     }
 
     if (passwordConfirm != password) {
       res.status(400);
+      res.json({ "error": "Les mot de passe sont différents"})
       throw new Error('Password are different');
     }
 
@@ -44,6 +46,7 @@ router.post('/register', async (req: any, res: any, next: any) => {
     console.log(existingUser)
     if (existingUser[0]) {
       res.status(400);
+      res.json({ "error": "Cette email est déjà utilisé"})
       throw new Error('Email already in use.');
     }
 

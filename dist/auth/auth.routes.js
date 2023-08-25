@@ -50,16 +50,19 @@ router.post('/register', (req, res, next) => __awaiter(void 0, void 0, void 0, f
         const { email, password, passwordConfirm, pseudo } = req.body;
         if (!email || !password || !passwordConfirm) {
             res.status(400);
-            throw new Error('You must provide an email and a password.');
+            res.json({ "error": "Certains champs ne sont pas remplis" });
+            // throw new Error('You must provide an email and a password.');
         }
         if (passwordConfirm != password) {
             res.status(400);
+            res.json({ "error": "Les mot de passe sont différents" });
             throw new Error('Password are different');
         }
         const existingUser = yield (0, users_services_1.findUserByEmail)(email);
         console.log(existingUser);
         if (existingUser[0]) {
             res.status(400);
+            res.json({ "error": "Cette email est déjà utilisé" });
             throw new Error('Email already in use.');
         }
         const lastId = yield (0, users_services_1.getLastIdUser)();
