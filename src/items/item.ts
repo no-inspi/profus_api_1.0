@@ -299,6 +299,37 @@ router.get('/get_rune_price', async (req: any, res: any) => {
     }
 })
 
+router.post('/set_rune_price', async (req: any, res: any) => {
+    // console.log(req.query.id)
+    console.log(req.body)
+    const lastrune = await dbexport.runes_prices.findMany({
+        orderBy: {
+            saved_date: "desc",
+        },
+        take: 1
+    })
+
+    console.log(lastrune)
+    let time = new Date(Date.now());
+
+    if (req.body.id != "undefined") {
+        const taux = await dbexport.runes_prices.create({
+            data: {
+                id_: Number(lastrune[0].id_+1),
+                id_intern: Number(lastrune[0].id_intern+1),
+                item_id: Number(req.body.id),
+                price: Number(req.body.price),
+                server_id: 36,
+                user_id: 0,
+                saved_date: time
+            }
+        })
+
+        
+        res.json(taux)
+    }
+})
+
 
 
 
